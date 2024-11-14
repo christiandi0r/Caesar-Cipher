@@ -1,6 +1,26 @@
 #Developed by: David Mangaoang, John Stewart, Michael Kaitel, David Agekyan, Christian Ruelas
 #CS 2640
-#Caesar Cipher
+# ----------------------Caesar Cipher--------------------------------
+# This MIPS assembly program implements a basic Caesar Cipher menu-driven
+# interface that allows the user to select between three options:
+# - Encrypt a Message
+# - Decrypt a Message
+# - Exit the Program
+#
+# Program Flow:
+# 1. Menu Display: The program first displays a main menu with options for
+#    encryption, decryption, or exiting.
+# 2. User Input: Based on the user’s input:
+#    - If the user selects '1', the program prompts them to enter a message
+#      to encrypt.
+#    - If the user selects '2', the program prompts them to enter a message
+#      to decrypt.
+#    - If the user selects '3', the program exits.
+# 3. Caesar Cipher Transformation: Both encryption and decryption use the
+#    Caesar Cipher technique, where each alphabetic character in the message
+#    is shifted by a fixed number of positions. This is implemented using MIPS
+#    assembly logic to perform the shifts while preserving the case of each letter.
+# --------------------------------------------------------------------
 
 .data
 menuPrompt: .asciiz "\n--------------- MAIN MENU ---------------\n(1)Encrypt Message\n(2)Decrypt Message\n(3)Exit Program"
