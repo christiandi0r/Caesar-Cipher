@@ -1,5 +1,6 @@
 #Developed by: David Mangaoang, John Stewart, Michael Kaitel, David Agekyan, Christian Ruelas
-#CS 2640
+#CS 2640 - Computer Organization and Assembly Programming 
+#
 # ----------------------Caesar Cipher--------------------------------
 # This MIPS assembly program implements a basic Caesar Cipher menu-driven
 # interface that allows the user to select between three options:
