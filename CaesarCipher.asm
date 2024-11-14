@@ -3,7 +3,12 @@
 #Caesar Cipher
 
 .data
+menuPrompt: .asciiz "\n--------------- MAIN MENU ---------------\n(1)Encrypt Message\n(2)Decrypt Message\n(3)Exit Program"
+input: .asciiz "Enter '1', '2', or '3' for your selection: "
 newline: .asciiz "\n"
+separator: .asciiz "-----------------------------------------"
+encryptInput: .asciiz "Enter a message to encrypt: "
+decryptInput: .asciiz "Enter a message to decrypt: "
 
 #Exit macro
 .macro exit
@@ -22,14 +27,18 @@ newline: .asciiz "\n"
 	
 .end_macro 
 
+#Seperator macro
+.macro separator
+
+	li $v0, 4
+	la $a0, separator
+	syscall
+
+.end_macro 
+
 #Menu macro
 .macro menu
 	
-	.data
-	menuPrompt: .asciiz "\n--------------- MAIN MENU ---------------\n(1)Encrypt Message\n(2)Decrypt Message"
-	input: .asciiz "Enter '1' or '2' for your selection: "
-	
-	.text
 	li $v0, 4
 	la $a0, menuPrompt
 	syscall
@@ -52,6 +61,34 @@ newline: .asciiz "\n"
 .text
 main:
 	menu
+	
+	separator
+	
+	newline
+	
+	#Checks user input, if 1 go to encrypt, if 2 go to decrypt, if 3 go to exit
+	beq $t0, 1, encrypt
+	beq $t0, 2, decrypt
+	beq $t0, 3, exit
+	
+
+encrypt:
+	
+	#Prompt the user to input a message to encrypt
+	li $v0, 4
+	la $a0, encryptInput
+	syscall
+	
+	exit
+
+decrypt:
+	
+	#Prompt the user to input a message to decrypt
+	li $v0, 4
+	la $a0, decryptInput
+	syscall
+	
+	exit
 	
 exit:
 	exit
