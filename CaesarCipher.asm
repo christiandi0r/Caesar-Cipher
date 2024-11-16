@@ -1,5 +1,5 @@
-#Developed by: David Mangaoang, John Stewart, Michael Kaitel, David Agekyan, Christian Ruelas
-#CS 2640 - Computer Organization and Assembly Programming 
+# Developed by: David Mangaoang, John Stewart, Michael Kaitel, David Agekyan, Christian Ruelas
+# CS 2640 - Computer Organization and Assembly Programming 
 #
 # ----------------------Caesar Cipher--------------------------------
 # This MIPS assembly program implements a basic Caesar Cipher menu-driven
@@ -30,8 +30,9 @@ newline: .asciiz "\n"
 separator: .asciiz "-----------------------------------------"
 encryptInput: .asciiz "Enter a message to encrypt: "
 decryptInput: .asciiz "Enter a message to decrypt: "
+buffer: .space 50	#buffer of 50 bytes
 
-#Exit macro
+# Exit macro
 .macro exit
 
 	li $v0, 10
@@ -39,7 +40,7 @@ decryptInput: .asciiz "Enter a message to decrypt: "
 	
 .end_macro 
 
-#Newline macro
+# Newline macro
 .macro newline
 	
 	li $v0, 4
@@ -48,7 +49,7 @@ decryptInput: .asciiz "Enter a message to decrypt: "
 	
 .end_macro 
 
-#Seperator macro
+# Seperator macro
 .macro separator
 
 	li $v0, 4
@@ -57,7 +58,7 @@ decryptInput: .asciiz "Enter a message to decrypt: "
 
 .end_macro 
 
-#Menu macro
+# Menu macro
 .macro menu
 	
 	li $v0, 4
@@ -78,6 +79,16 @@ decryptInput: .asciiz "Enter a message to decrypt: "
 
 .end_macro
 
+# User input macro for encrypted/decrypted message
+.macro getString
+	
+	#Get user input (string)
+	li $v0, 8
+	la $a0, buffer	#a0 for the buffer
+	li $a1, 50	#a1 for the string length, 50 characters
+	syscall
+
+.end_macro
 
 .text
 main:
@@ -87,7 +98,7 @@ main:
 	
 	newline
 	
-	#Checks user input, if 1 go to encrypt, if 2 go to decrypt, if 3 go to exit
+	# Checks user input, if 1 go to encrypt, if 2 go to decrypt, if 3 go to exit
 	beq $t0, 1, encrypt
 	beq $t0, 2, decrypt
 	beq $t0, 3, exit
@@ -95,19 +106,23 @@ main:
 
 encrypt:
 	
-	#Prompt the user to input a message to encrypt
+	# Prompt the user to input a message to encrypt
 	li $v0, 4
 	la $a0, encryptInput
 	syscall
+	
+	getString
 	
 	exit
 
 decrypt:
 	
-	#Prompt the user to input a message to decrypt
+	# Prompt the user to input a message to decrypt
 	li $v0, 4
 	la $a0, decryptInput
 	syscall
+	
+	getString
 	
 	exit
 	
