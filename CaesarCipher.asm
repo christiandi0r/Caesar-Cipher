@@ -30,7 +30,7 @@ newline: .asciiz "\n"
 separator: .asciiz "-----------------------------------------"
 encryptInput: .asciiz "Enter a message to encrypt: "
 decryptInput: .asciiz "Enter a message to decrypt: "
-buffer: .space 50	#buffer of 50 bytes
+buffer: .space 200	#buffer of 200 bytes
 
 # Exit macro
 .macro exit
@@ -85,7 +85,7 @@ buffer: .space 50	#buffer of 50 bytes
 	#Get user input (string)
 	li $v0, 8
 	la $a0, buffer	#a0 for the buffer
-	li $a1, 50	#a1 for the string length, 50 characters
+	li $a1, 200	#a1 for the string length, 200 characters
 	syscall
 
 .end_macro
