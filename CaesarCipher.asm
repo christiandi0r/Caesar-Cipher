@@ -11,7 +11,7 @@
 # Program Flow:
 # 1. Menu Display: The program first displays a main menu with options for
 #    encryption, decryption, or exiting.
-# 2. User Input: Based on the user’s input:
+# 2. User Input: Based on the user's input:
 #    - If the user selects '1', the program prompts them to enter a message
 #      to encrypt.
 #    - If the user selects '2', the program prompts them to enter a message
@@ -34,6 +34,7 @@ decryptInput: .asciiz "Enter a message to decrypt: "
 encryptAmount: .asciiz "Enter the amount to encrypt by: "
 decryptAmount: .asciiz "Enter the amount to decrypt by: "
 encryptDone: .asciiz "Here is the encrypted message: "
+decryptDone: .asciiz "Here is the decrypted message: "
 
 error: .asciiz "Sorry that is an invalid input, please try again\n"
 
@@ -208,15 +209,78 @@ doneEncrypt:
 	j main
 
 decrypt:
-	
-	# Prompt the user to input a message to decrypt
-	li $v0, 4
-	la $a0, decryptInput
-	syscall
-	
-	getString
-	
-	exit
+    # Prompt the user to input a message to decrypt
+    printString(decryptInput)
+    # Get user input
+    getString
+    
+    # Prompt the user for decryption amount
+    printString(decryptAmount)
+    getInt
+    
+    la $s0, string   #load address of the string to $s0
+    
+    li $t1, 'a'      #load the ascii values of both upper and lower case A and Z for logic gates
+    li $t2, 'z'
+    li $t3, 'A'
+    li $t4, 'Z'
+    li $t5, 32       #to allow spaces in the string the program needs to branch when it sees one
+    
+    li $s2, 26       #load the value to add the int by for underflow
+
+decryptLoop:
+    lb $s1, 0($s0)               #load the first byte of the string into $s1
+    
+    beq $s1, 10, doneDecrypt     #If the character is a null character then program is done, jump to done
+    
+    beq $s1, 32, next_char_decrypt   #if there is a space go to the next character
+    
+    blt $s1, $t3, unexpectedStringItemDecrypt   #If ascii < A, not a letter print error and retry
+    
+    bgt $s1, $t2, unexpectedStringItemDecrypt   #If ascii > z, not a letter print error and retry
+    
+    bgt $s1, $t4, lowerCaseDecrypt      #If ascii is > Z it is most likely lowercase, move to lower case decrypt (check if not in gap)
+    
+    ble $s1, $t4, upperCaseDecrypt      #If ascii is <= Z it is most likely uppercase move to upper case decrypt
+    
+lowerCaseDecrypt:
+    blt $s1, $t1, unexpectedStringItemDecrypt   #IF ascii < a it is most likely not a letter, print error and retry
+    
+    sub $s1, $s1, $t0           #subtract the key from the character to shift it to its proper place
+    blt $s1, $t1, underflowLow  #if it is no longer a letter have it wrap around( ex. a -> z)
+    sb $s1, 0($s0)              #store byte back into string
+    j next_char_decrypt
+    
+upperCaseDecrypt:
+    sub $s1, $s1, $t0           #subtract the key from the character to shift it to its proper place
+    blt $s1, $t3, underflowCap  #if it is no longer a letter have it wrap around(ex. A -> Z)
+    sb $s1, 0($s0)              #store byte back into string
+    j next_char_decrypt
+
+underflowCap:
+    add $s1, $s1, $s2           #wrap int around to underflow value
+    blt $s1, $t3, underflowCap  #check if capital letter is still under limit
+    sb $s1, 0($s0)              #store byte back into string
+    j next_char_decrypt
+
+underflowLow:
+    add $s1, $s1, $s2           #wrap int around to underflow value
+    blt $s1, $t1, underflowLow  #check if lowercase letter is still under limit
+    sb $s1, 0($s0)              #store byte back into string
+    j next_char_decrypt
+    
+next_char_decrypt:
+    addi $s0, $s0, 1            #set up the next char in the string and go again
+    j decryptLoop
+
+unexpectedStringItemDecrypt:
+    printString(error)          #print out error message and prompts user to try again
+    j decrypt
+
+doneDecrypt:
+    printString(decryptDone)    #print out decrypted string and jump back to main
+    printString(string)
+    j main
 	
 exit:
 	exit
